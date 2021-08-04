@@ -5,11 +5,14 @@ import com.xgj.common.utils.R;
 import com.xgj.gulimall.coupon.entity.CouponEntity;
 import com.xgj.gulimall.coupon.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -19,16 +22,23 @@ import java.util.Map;
  * @email xuegj@gmail.com
  * @date 2021-07-30 22:20:09
  */
+@RefreshScope
 @RestController
 @RequestMapping("coupon/coupon")
 public class CouponController {
     @Autowired
     private CouponService couponService;
 
-    /**
-     * 获取会员所有优惠卷
-     * @return
-     */
+    @Value("${coupon.user.name}")
+    private String name;
+    @Value("${coupon.user.age}")
+    private Integer age;
+
+    @RequestMapping("/test")
+    public R test() {
+        return Objects.requireNonNull(R.ok().put("name", name)).put("age", age);
+    }
+
     @RequestMapping("/member/list")
     public R memberCoupons() {
         CouponEntity couponEntity = new CouponEntity();

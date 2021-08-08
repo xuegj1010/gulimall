@@ -1,0 +1,39 @@
+<template>
+  <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+</template>
+
+<script>
+export default {
+  name: 'category',
+  data () {
+    return {
+      data: [],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
+    }
+  },
+  methods: {
+    handleNodeClick (data) {
+      console.log(data)
+    },
+    getMenus () {
+      this.dataListLoading = true
+      this.$http({
+        url: this.$http.adornUrl('/product/category/list/tree'),
+        method: 'get'
+      }).then(({data}) => {
+        console.log('c成功获取到菜单数据...', data)
+      })
+    }
+  },
+  created () {
+    this.getMenus()
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

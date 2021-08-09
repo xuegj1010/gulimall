@@ -38,17 +38,24 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
         return categoryEntities.stream()
                 .filter(categoryEntity -> categoryEntity.getParentCid() == 0)
-                .peek((menu) -> menu.setChildren(getChildrens(menu, categoryEntities)))
+                .peek((menu) -> menu.setChildren(getChildren(menu, categoryEntities)))
                 .sorted(Comparator.comparingInt(menu -> (menu.getSort() == null ? 0 : menu.getSort())))
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void removeMenuByIds(List<Long> asList) {
+        //TODO 检查当前删除的菜单，是否被其他地方引用
+        baseMapper.deleteBatchIds(asList);
+    }
+
+
     // 递归查找所有菜单的子菜单
-    private List<CategoryEntity> getChildrens(CategoryEntity root, List<CategoryEntity> all) {
+    private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
         return all.stream().filter(categoryEntity -> categoryEntity.getParentCid().equals(root.getCatId()))
                 .peek(categoryEntity -> {
                     // 1、找到子菜单
-                    categoryEntity.setChildren(getChildrens(categoryEntity, all));
+                    categoryEntity.setChildren(getChildren(categoryEntity, all));
                 })
                 .sorted(Comparator.comparingInt(menu -> (menu.getSort() == null ? 0 : menu.getSort())))
                 .collect(Collectors.toList());

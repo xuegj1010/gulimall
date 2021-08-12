@@ -13,6 +13,12 @@
             Append
           </el-button>
           <el-button
+            type="text"
+            size="mini"
+            @click="edit(data)">
+            Edit
+          </el-button>
+          <el-button
             v-if="node.childNodes.length==0"
             type="text"
             size="mini"
@@ -23,17 +29,25 @@
       </span>
     </el-tree>
     <el-dialog
-      title="提示"
+      :title="title"
       :visible.sync="dialogVisible"
-      width="30%">
+      width="30%"
+      :close-on-click-modal=false
+    >
       <el-form :model="category">
         <el-form-item label="分类名称">
           <el-input v-model="category.name" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="图标">
+          <el-input v-model="category.icon" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="计量单位">
+          <el-input v-model="category.productUnit" autocomplete="off"></el-input>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addCategory">确 定</el-button>
+        <el-button type="primary" @click="submitData">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -44,12 +58,17 @@ export default {
   name: 'category',
   data () {
     return {
+      title: '',
+      dialogType: '', // edit,add 用于判断打开的对话框是修改打开的还是添加打开的
       category: {
         name: '',
         parentCid: 0,
         catLevel: 0,
         showStatus: 1,
-        sort: 0
+        sort: 0,
+        icon: '',
+        productUnit: '',
+        catId: null
       },
       dialogVisible: false,
       menus: [],
@@ -67,23 +86,60 @@ export default {
         url: this.$http.adornUrl('/product/category/list/tree'),
         method: 'get'
       }).then(({data}) => {
-        this.menus = data.menus
+        this.menus = data.data
       })
     },
     append (data) {
       this.dialogVisible = true
+      this.dialogType = 'add'
+      this.title = '添加分类'
       this.category.parentCid = data.catId
       this.category.catLevel = data.catLevel * 1 + 1
+      this.category.catId = null
+      this.category.name = ''
+      this.category.icon = ''
+      this.category.productUnit = ''
+      this.sort = 0
+      this.category.showStatus = 1
     },
-    // 添加三级分类
-    addCategory () {
+    edit (data) {
+      this.dialogVisible = true
+      this.dialogType = 'edit'
+      this.title = '修改分类'
+
+      // 发送请求获取当前节点最新的数据
       this.$http({
-        url: this.$http.adornUrl('/product/category/save'),
+        url: this.$http.adornUrl(`/product/category/info/${data.catId}`),
+        method: 'get',
+        params: this.$http.adornParams({})
+      }).then(({data}) => {
+        // 请求成功
+        this.category.name = data.data.name
+        this.category.catId = data.data.catId
+        this.category.icon = data.data.icon
+        this.category.productUnit = data.data.productUnit
+        this.category.parentCid = data.data.parentCid
+      })
+      console.log(this.category)
+    },
+    submitData () {
+      if (this.dialogType === 'add') {
+        this.addCategory()
+      }
+      if (this.dialogType === 'edit') {
+        this.editCategory()
+      }
+    },
+    // 修改三级分类
+    editCategory () {
+      const {catId, name, icon, productUnit} = this.category
+      this.$http({
+        url: this.$http.adornUrl('/product/category/update'),
         method: 'post',
-        data: this.$http.adornData(this.category, false)
+        data: this.$http.adornData({catId, name, icon, productUnit}, false)
       }).then(({data}) => {
         this.$message({
-          message: '菜单保存成功',
+          message: '菜单修改成功',
           type: 'success'
         })
         // 关闭对话框
@@ -94,6 +150,25 @@ export default {
         this.expandedKey = [this.category.parentCid]
         // 输入框清空
         this.category.name = ''
+      })
+    },
+    // 添加三级分类
+    addCategory () {
+      this.$http({
+        url: this.$http.adornUrl('/product/category/save'),
+        method: 'post',
+        data: this.$http.adornData(this.category, false)
+      }).then(({data}) => {
+        this.$message({
+          message: '菜单添加成功',
+          type: 'success'
+        })
+        // 关闭对话框
+        this.dialogVisible = false
+        // 刷新出新的菜单
+        this.getMenus()
+        // 设置需要默认展开的菜单
+        this.expandedKey = [this.category.parentCid]
       })
     },
 

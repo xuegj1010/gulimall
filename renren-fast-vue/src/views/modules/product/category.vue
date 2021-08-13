@@ -1,7 +1,13 @@
 <template>
   <div>
-    <el-tree :data="menus" :props="defaultProps" :expand-on-click-node="false" show-checkbox node-key="catId"
-             :default-expanded-keys="expandedKey">
+    <el-tree :data="menus"
+             :props="defaultProps"
+             :expand-on-click-node="false"
+             show-checkbox node-key="catId"
+             :default-expanded-keys="expandedKey"
+             draggable="true"
+             :allow-drop="allowDrop"
+    >
     <span class="custom-tree-node" slot-scope="{ node, data }">
       <span>{{ node.label }}</span>
         <span>
@@ -58,6 +64,7 @@ export default {
   name: 'category',
   data () {
     return {
+      maxLevel: 0,
       title: '',
       dialogType: '', // edit,add 用于判断打开的对话框是修改打开的还是添加打开的
       category: {
@@ -88,6 +95,29 @@ export default {
       }).then(({data}) => {
         this.menus = data.data
       })
+    },
+    allowDrop (draggingNode, dropNode, type) {
+      // 1、被拖动的当前总节点层数
+      this.countNodeLevel(draggingNode.data)
+      // 、被拖动的当前节点以及所在父节点总层数不能大于3
+      let deep = this.maxLevel - draggingNode.data.catLevel + 1
+
+      if (type === 'inner') {
+        return (deep + dropNode.level) <= 3
+      } else {
+        return (deep + dropNode.parent.level) <= 3
+      }
+    },
+    countNodeLevel (node) {
+      // 找到所有子节点，求出最大深度
+      if (node.children != null && node.children.length > 0) {
+        for (let i = 0; i < node.children.length; i++) {
+          if (node.children[i].catLevel > this.maxLevel) {
+            this.maxLevel = node.children[i].catLevel
+          }
+          this.countNodeLevel(node.children[i])
+        }
+      }
     },
     append (data) {
       this.dialogVisible = true
@@ -137,7 +167,7 @@ export default {
         url: this.$http.adornUrl('/product/category/update'),
         method: 'post',
         data: this.$http.adornData({catId, name, icon, productUnit}, false)
-      }).then(({data}) => {
+      }).then(() => {
         this.$message({
           message: '菜单修改成功',
           type: 'success'
@@ -158,7 +188,7 @@ export default {
         url: this.$http.adornUrl('/product/category/save'),
         method: 'post',
         data: this.$http.adornData(this.category, false)
-      }).then(({data}) => {
+      }).then(() => {
         this.$message({
           message: '菜单添加成功',
           type: 'success'
@@ -183,7 +213,7 @@ export default {
           url: this.$http.adornUrl('/product/category/delete'),
           method: 'post',
           data: this.$http.adornData(ids, false)
-        }).then(({data}) => {
+        }).then(() => {
           this.$message({
             message: `菜单删除成功`,
             type: 'success'

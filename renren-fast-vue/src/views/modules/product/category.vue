@@ -128,7 +128,8 @@ export default {
             })
             this.getMenus()
           })
-        }).catch(() => {})
+        }).catch(() => {
+        })
     },
 
     batchSave () {

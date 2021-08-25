@@ -41,6 +41,13 @@
         header-align="center"
         align="center"
         label="品牌logo地址">
+        <template slot-scope="scope" class="imgWrap">
+<!--          <el-image-->
+<!--            :src="scope.row.logo"-->
+<!--            style="width: 100px;height: 80px"-->
+<!--            fit="contain"></el-image>-->
+          <img :src="scope.row.logo" style="width: 100px;height: 80px"  alt=""/>
+        </template>
       </el-table-column>
       <el-table-column
         prop="descript"
@@ -152,7 +159,7 @@ export default {
     updateBrandStatus (data) {
       let {brandId, showStatus} = data
       this.$http({
-        url: this.$http.adornUrl('/product/brand/update'),
+        url: this.$http.adornUrl('/product/brand/update/status'),
         method: 'post',
         data: this.$http.adornData({brandId, showStatus}, false)
       }).then(({data}) => {

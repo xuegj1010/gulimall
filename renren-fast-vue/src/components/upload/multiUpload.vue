@@ -89,10 +89,12 @@ export default {
       return new Promise((resolve, reject) => {
         policy()
           .then(response => {
+            // eslint-disable-next-line no-template-curly-in-string
             console.log('这是什么${filename}')
             _self.dataObj.policy = response.data.policy
             _self.dataObj.signature = response.data.signature
             _self.dataObj.ossaccessKeyId = response.data.accessid
+            // eslint-disable-next-line no-template-curly-in-string
             _self.dataObj.key = response.data.dir + getUUID() + '_${filename}'
             _self.dataObj.dir = response.data.dir
             _self.dataObj.host = response.data.host
@@ -100,6 +102,7 @@ export default {
           })
           .catch(err => {
             console.log('出错了...', err)
+            // eslint-disable-next-line prefer-promise-reject-errors
             reject(false)
           })
       })
@@ -108,6 +111,7 @@ export default {
       this.fileList.push({
         name: file.name,
         // url: this.dataObj.host + "/" + this.dataObj.dir + "/" + file.name； 替换${filename}为真正的文件名
+        // eslint-disable-next-line no-template-curly-in-string
         url: this.dataObj.host + '/' + this.dataObj.key.replace('${filename}', file.name)
       })
       this.emitInput(this.fileList)

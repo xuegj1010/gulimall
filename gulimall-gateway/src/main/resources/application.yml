@@ -1,5 +1,10 @@
 spring:
+  application:
+    name: gulimall-gateway
   cloud:
+    nacos:
+      discovery:
+        server-addr: 124.222.172.78:8848
     gateway:
       routes:
         - id: taobao_route
@@ -31,3 +36,5 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment}
+server:
+  port: 9000

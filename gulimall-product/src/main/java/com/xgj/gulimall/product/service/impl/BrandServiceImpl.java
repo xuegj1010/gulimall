@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 @Service("brandService")
-public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
+public class  BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
 
     @Autowired
     CategoryBrandRelationService categoryBrandRelationService;
@@ -32,7 +32,6 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
             queryWrapper.eq("brand_id", key).or().like("name", key);
         }
 
-
         IPage<BrandEntity> page = this.page(
                 new Query<BrandEntity>().getPage(params),
                 queryWrapper
@@ -41,7 +40,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         return new PageUtils(page);
     }
 
-    @Transactional
+    @Transactional // 开启事务
     @Override
     public void updateDetail(BrandEntity brand) {
         // 保证冗余字段的数据一致

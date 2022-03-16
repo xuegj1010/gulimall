@@ -68,11 +68,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      *
      * @param category
      */
-    @Transactional
+    @Transactional  // 事务
     @Override
     public void updateCascade(CategoryEntity category) {
+        // 更新自己
         this.updateById(category);
-
+        //更新关联表
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 

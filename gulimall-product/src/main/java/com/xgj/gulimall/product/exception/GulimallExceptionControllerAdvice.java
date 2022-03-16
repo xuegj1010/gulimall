@@ -32,11 +32,13 @@ public class GulimallExceptionControllerAdvice {
 
     /**
      * 异常无法精确匹配直接走该方法处理任意异常
+     *
      * @param throwable
      * @return
      */
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable throwable) {
+        log.error("错误：", throwable);
         return R.error(BizCodeEnum.UNKNOWN_EXCEPTION.getCode(), BizCodeEnum.UNKNOWN_EXCEPTION.getMsg());
     }
 }

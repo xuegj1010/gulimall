@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan("com.xgj.gulimall.product.dao")
 public class MybatisPlusConfig {
 
-    // 旧版
+    // 旧版 引入分页插件
     @Bean
     public PaginationInterceptor paginationInterceptor() {
         PaginationInterceptor paginationInterceptor = new PaginationInterceptor();

@@ -75,7 +75,7 @@ public class BrandController {
     }
 
     /**
-     * 修改
+     * 修改状态
      */
     @RequestMapping("/update")
     public R update(@Validated({UpdateGroup.class}) @RequestBody BrandEntity brand) {

@@ -1,17 +1,17 @@
-spring:
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 124.222.172.78:8848
-    alicloud:
-      access-key: *****
-      secret-key: *****
-      oss:
-        endpoint: oss-cn-shanghai.aliyuncs.com
-        bucket: gulimall-xgj
-  application:
-    name: gulimall-third
-
-
-server:
-  port: 9060
+#spring:
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 124.222.172.78:8848
+#    alicloud:
+#      access-key: *****
+#      secret-key: *****
+#      oss:
+#        endpoint: oss-cn-shanghai.aliyuncs.com
+#        bucket: gulimall-xgj
+#  application:
+#    name: gulimall-third
+#
+#
+#server:
+#  port: 9060

@@ -42,7 +42,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     public void saveDetail(CategoryBrandRelationEntity categoryBrandRelation) {
         Long brandId = categoryBrandRelation.getBrandId();
         Long catelogId = categoryBrandRelation.getCatelogId();
-        // 查询相信名字
+        // 查询详细名字
         BrandEntity brandEntity = brandDao.selectById(brandId);
         CategoryEntity categoryEntity = categoryDao.selectById(catelogId);
 
